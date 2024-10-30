@@ -2,11 +2,9 @@ import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 import sqlite3
 import product_table
-import data.product as products
 
 conn = sqlite3.connect("data\main.db")
 cursor = conn.cursor()
-ProductList = product_table.ProductList
 windowColor = ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
 
 
@@ -27,7 +25,9 @@ class ManageProductWindow(ctk.CTkFrame):
             self.labelFrame, text="Select Products to delete:", font=("roboto", 15)
         )
         self.selectLabel.grid(row=5, column=0, sticky="w")
-        self.productTable = product_table.ProductTable(self)
+        self.productTable = product_table.ProductTable(
+            self, product_table.initializeData()
+        )
         self.productTable.grid(row=6, column=0, columnspan=2, sticky="news", padx=20)
         self.deleteButton = ctk.CTkButton(self, text="Delete", command=self.delete)
         self.deleteButton.grid(row=7, column=0, padx=20, sticky="w")
@@ -76,9 +76,10 @@ class ManageProductWindow(ctk.CTkFrame):
                 f"INSERT INTO products VALUES ('{sku}','{product}',{(price)})"
             )
             conn.commit()
-            ProductList.append(products.Product((sku, product, price)))
             self.productTable.destroy()
-            self.productTable = product_table.ProductTable(self)
+            self.productTable = product_table.ProductTable(
+                self, product_table.initializeData()
+            )
             self.productTable.grid(
                 row=6, column=0, columnspan=2, sticky="news", padx=20
             )
@@ -99,7 +100,9 @@ class ManageProductWindow(ctk.CTkFrame):
         self.productEntry.delete(0, ctk.END)
         self.defaultPriceEntry.delete(0, ctk.END)
         self.productTable.destroy()
-        self.productTable = product_table.ProductTable(self)
+        self.productTable = product_table.ProductTable(
+            self, product_table.initializeData()
+        )
         self.productTable.grid(row=6, column=0, columnspan=2, sticky="news", padx=20)
 
     def fetch(self):
@@ -110,12 +113,13 @@ class ManageProductWindow(ctk.CTkFrame):
         self.defaultPriceEntry.insert(0, data[2])
 
     def delete(self):
-        print(self.productTable.checked)
-        for i in self.productTable.checked:
-            if i:
-                cursor.execute(f"DELETE FROM products WHERE SKU = '{i}'")
-                conn.commit()
-                product_table.initializeData()
+        print(self.productTable.checkedList)
+        for i in self.productTable.checkedList:
+            cursor.execute(f"DELETE FROM products WHERE SKU = '{i}'")
+            conn.commit()
+            product_table.initializeData()
         self.productTable.destroy()
-        self.productTable = product_table.ProductTable(self)
+        self.productTable = product_table.ProductTable(
+            self, product_table.initializeData()
+        )
         self.productTable.grid(row=6, column=0, columnspan=2, sticky="news", padx=20)
