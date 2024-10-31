@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import client_table
+from tables import client_table
 import sqlite3
 
 connection = sqlite3.connect("data/main.db")

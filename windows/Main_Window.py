@@ -1,8 +1,10 @@
 import customtkinter as ctk
 import sqlite3
 from CTkMessagebox import CTkMessagebox
-import product_table
+from tables import product_table
 import utils.table_cells as table_cells
+import data.quotation_data as quotation_data
+import utils.generate_pdf as generate_pdf
 
 windowColor = ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
 
@@ -21,11 +23,11 @@ class QuotationWindow(ctk.CTkFrame):
         self.labelFrame = ctk.CTkFrame(self, fg_color=windowColor)
         self.labelFrame.grid(row=1, column=0, sticky="w", padx=20)
         self.selectClientLabel = ctk.CTkLabel(
-            self.labelFrame, text="Select Client:", font=("roboto", 15)
+            self.labelFrame, text="Select Client by ID:", font=("roboto", 15)
         )
         self.selectClientLabel.grid(row=0, column=0, sticky="w")
         self.clientMenu = ctk.CTkOptionMenu(
-            self.labelFrame, values=["Client 1", "Client 2", "Client 3"]
+            self.labelFrame, values=self.getClients(), font=("roboto", 15)
         )
         self.clientMenu.grid(row=0, column=1, padx=10)
 
@@ -44,13 +46,29 @@ class QuotationWindow(ctk.CTkFrame):
         )
         self.generateButton.grid(row=3, column=0, sticky="w", padx=20, pady=20)
 
+    def getClients(self):
+        self.connection = sqlite3.connect("data/main.db")
+        self.cursor = self.connection.cursor()
+        self.clientList = []
+        try:
+            self.cursor.execute("SELECT ClientID FROM clients")
+            self.clients = self.cursor.fetchall()
+            for client in self.clients:
+                self.clientList.append(str(client[0]))
+            return self.clientList
+        except:
+            return ["No Clients Found"]
+
     def generate(self):
         if not self.productTable.checkedList:
             self.message = CTkMessagebox(
                 self, title="Error", message="No Products Selected", icon="cancel"
             )
         else:
-            self.window = GenerateWindow(self)
+            self.cursor.execute(
+                f"SELECT * FROM clients WHERE ClientID={self.clientMenu.get()}"
+            )
+            self.window = GenerateWindow(self, self.cursor.fetchone())
 
 
 class EntryCells(ctk.CTkEntry):
@@ -69,7 +87,7 @@ class EntryCells(ctk.CTkEntry):
 
 
 class GenerateWindow(ctk.CTkToplevel):
-    def __init__(self, master):
+    def __init__(self, master, clientDetails):
         super().__init__(master)
         self.geometry("800x400")
         self.focus_set()
@@ -79,6 +97,7 @@ class GenerateWindow(ctk.CTkToplevel):
         self.rowconfigure((0, 1, 2), weight=1)
         self.resizable(False, False)
         self.checkedList = tuple(self.master.productTable.checkedList)
+        self.clientDetails = clientDetails
 
         ctk.CTkLabel(
             self, text="Insert Price and Quantity", font=("roboto bold", 20)
@@ -95,10 +114,14 @@ class GenerateWindow(ctk.CTkToplevel):
             self, text="Get Data", command=self.getDataEvent
         )
         self.getDataButton.grid(row=2, column=0, sticky="nw", padx=20)
-        self.data = self.getData()
+        self.generateQuotationButton = ctk.CTkButton(
+            self, text="Generate Quotation", command=self.generateQuotation
+        )
+        self.generateQuotationButton.grid(row=2, column=1, padx=20)
         self.table()
 
     def getDataEvent(self):
+        self.data = self.getData()
         self.finalData = []
         for i, j in enumerate(self.data):
             self.finalData.append(
@@ -110,6 +133,16 @@ class GenerateWindow(ctk.CTkToplevel):
                 )
             )
         print(self.finalData)
+        return self.finalData
+
+    def generateQuotation(self):
+        self.quotationData = quotation_data.QuotationData(
+            ["KAVI", "Arnav", "Pune", "arnav@gmail.com", "1234567890"],
+            self.clientDetails,
+            self.getDataEvent(),
+        )
+        print(self.quotationData.data())
+        generate_pdf.generate_invoice_pdf(self.quotationData.data())
 
     def getData(self):
         self.connection = sqlite3.connect("data/main.db")

@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 import sqlite3
-import product_table
+from tables import product_table
 
 conn = sqlite3.connect("data\main.db")
 cursor = conn.cursor()

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Corporate Invoice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+      }
+      .container {
+        margin: 0 auto;
+        background: #fff;
+        padding: 40px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+      }
+      .header .logo {
+        font-size: 36px;
+        color: #007bff;
+        font-weight: bold;
+      }
+      .header .invoice-title {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .flex-container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .flex-container p {
+        margin: 5px 0;
+      }
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        color: #007bff;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #007bff;
+        color: white;
+      }
+      .payment-details,
+      .notes {
+        font-size: 14px;
+      }
+      .balance {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f0f8ff;
+        font-weight: bold;
+        font-size: 16px;
+      }
+      .totals {
+        justify-self: end;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="invoice-title">Price Quote</div>
+      </div>
+
+      <div class="flex-container">
+        <div class="company-info">
+          <p><strong>Supplier Details:</strong></p>
+          <p>{{supplier_company_name}}</p>
+          <p>{{supplier_name}}</p>
+          <p>{{supplier_email}}</p>
+          <p>{{supplier_phone}}</p>
+          <p>{{supplier_address}}</p>
+        </div>
+        <div class="client-info">
+          <p><strong>Client Details:</strong></p>
+          <p>{{client_name}}</p>
+          <p>{{client_email}}</p>
+          <p>{{client_phone}}</p>
+          <p>{{client_address}}</p>
+        </div>
+      </div>
+
+      <table>
+        <tr>
+          <th>Product SKU</th>
+          <th>Product Name</th>
+          <th>Unit Price</th>
+          <th>QTY</th>
+          <th>Total</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+          <td>{{item.sku}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.unit_price}}</td>
+          <td>{{item.quantity}}</td>
+          <td>{{item.total}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+
+      <div class="totals">
+        <table>
+          <tr>
+            <td>Subtotal:</td>
+            <td>{{subtotal}}</td>
+          </tr>
+          <tr>
+            <td>GST @18%:</td>
+            <td>{{gst_total}}</td>
+          </tr>
+          <tr>
+            <td>Total:</td>
+            <td>{{net_total}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
