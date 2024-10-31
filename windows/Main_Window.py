@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import sqlite3
 from CTkMessagebox import CTkMessagebox
+import json
 from tables import product_table
 import utils.table_cells as table_cells
 import data.quotation_data as quotation_data
@@ -96,7 +97,10 @@ class GenerateWindow(ctk.CTkToplevel):
         self.columnconfigure(0, weight=1)
         self.rowconfigure((0, 1, 2), weight=1)
         self.resizable(False, False)
-        self.checkedList = tuple(self.master.productTable.checkedList)
+        if len(self.master.productTable.checkedList) == 1:
+            self.checkedList = tuple(self.master.productTable.checkedList) + (0,)
+        else:
+            self.checkedList = tuple(self.master.productTable.checkedList)
         self.clientDetails = clientDetails
 
         ctk.CTkLabel(
@@ -110,14 +114,11 @@ class GenerateWindow(ctk.CTkToplevel):
         )
         self.tableFrame.grid(row=1, column=0, sticky="news", padx=20, pady=20)
         self.tableFrame.columnconfigure((0, 1, 2, 3), weight=1)
-        self.getDataButton = ctk.CTkButton(
-            self, text="Get Data", command=self.getDataEvent
-        )
-        self.getDataButton.grid(row=2, column=0, sticky="nw", padx=20)
+
         self.generateQuotationButton = ctk.CTkButton(
             self, text="Generate Quotation", command=self.generateQuotation
         )
-        self.generateQuotationButton.grid(row=2, column=1, padx=20)
+        self.generateQuotationButton.grid(row=2, column=0, sticky="nw", padx=20)
         self.table()
 
     def getDataEvent(self):
@@ -136,12 +137,20 @@ class GenerateWindow(ctk.CTkToplevel):
         return self.finalData
 
     def generateQuotation(self):
+        with open("settings.json", "r") as f:
+            self.settings = json.load(f)
+            self.supplierInformation = [
+                self.settings["supplierCompany"],
+                self.settings["supplierName"],
+                self.settings["supplierAddress"],
+                self.settings["supplierEmail"],
+                self.settings["supplierPhone"],
+            ]
         self.quotationData = quotation_data.QuotationData(
-            ["KAVI", "Arnav", "Pune", "arnav@gmail.com", "1234567890"],
+            self.supplierInformation,
             self.clientDetails,
             self.getDataEvent(),
         )
-        print(self.quotationData.data())
         generate_pdf.generate_invoice_pdf(self.quotationData.data())
 
     def getData(self):
@@ -165,7 +174,7 @@ class GenerateWindow(ctk.CTkToplevel):
         self.quantityHeader = table_cells.TableCells(self.tableFrame, text="Quantity")
         self.quantityHeader.grid(row=0, column=3, sticky="news")
 
-        for i, product in enumerate(self.data):
+        for i, product in enumerate(self.getData()):
             self.sku = table_cells.TableCells(self.tableFrame, text=product[0])
             self.sku.grid(row=i + 1, column=0, sticky="news")
             self.product = table_cells.TableCells(self.tableFrame, text=product[1])

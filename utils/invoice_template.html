@@ -24,19 +24,17 @@
         padding-bottom: 20px;
         margin-bottom: 20px;
       }
-      .header .logo {
-        font-size: 36px;
-        color: #007bff;
-        font-weight: bold;
-      }
       .header .invoice-title {
         font-size: 24px;
         font-weight: bold;
       }
 
       .flex-container {
+        display: -webkit-box;
         display: flex;
         justify-content: space-between;
+        -webkit-box-pack: justify;
+        margin-right: 50px;
       }
       .flex-container p {
         margin: 5px 0;
@@ -64,21 +62,10 @@
         background-color: #007bff;
         color: white;
       }
-      .payment-details,
-      .notes {
-        font-size: 14px;
-      }
-      .balance {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f0f8ff;
-        font-weight: bold;
-        font-size: 16px;
-      }
+
       .totals {
         justify-self: end;
+        -webkit-box-pack: end;
       }
     </style>
   </head>

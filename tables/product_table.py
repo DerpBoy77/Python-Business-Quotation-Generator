@@ -20,10 +20,6 @@ def initializeData():
             "CREATE TABLE products (SKU char(10) PRIMARY KEY,Product varchar(50), DefaultPrice INTEGER)"
         )
         conn.commit()
-        cursor.execute("INSERT INTO products VALUES ('AB_1','Product 1', 100)")
-        cursor.execute("INSERT INTO products VALUES ('AB_2','Product 2', 200)")
-        cursor.execute("INSERT INTO products VALUES ('AB_3','Product 3', 300)")
-        conn.commit()
         cursor.execute("SELECT * FROM products")
         for i in cursor.fetchall():
             ProductList.append(product.Product(i))

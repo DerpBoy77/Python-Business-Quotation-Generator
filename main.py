@@ -1,9 +1,27 @@
 import customtkinter as ctk
+import json
 import windows.product_management as product_management
 import windows.Main_Window as Main_Window
 import windows.client_management as client_management
+import windows.settings as settings
 
 windowColor = ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
+
+try:
+    with open("data/settings.json", "r") as file:
+        settingsFile = json.load(file)
+        ctk.set_appearance_mode(settingsFile["theme"])
+except FileNotFoundError:
+    settingsString = {
+        "supplierCompany": "",
+        "supplierName": "",
+        "supplierAddress": "",
+        "supplierPhone": "",
+        "supplierEmail": "",
+        "theme": "Dark",
+    }
+    with open("data/settings.json", "w") as f:
+        json.dump(settingsString, f)
 
 
 class Sidebar(ctk.CTkFrame):
@@ -36,7 +54,7 @@ class Sidebar(ctk.CTkFrame):
         self.master.createManageClientWindow()
 
     def settingsButtonClick(self):
-        return
+        self.master.createSettingsWindow()
 
 
 class App(ctk.CTk):
@@ -70,6 +88,12 @@ class App(ctk.CTk):
         for widget in self.mainWindow.winfo_children():
             widget.destroy()
         self.main = client_management.ManageClientWindow(self.mainWindow)
+        self.main.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
+
+    def createSettingsWindow(self):
+        for widget in self.mainWindow.winfo_children():
+            widget.destroy()
+        self.main = settings.SettingsWindow(self.mainWindow)
         self.main.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
 
 

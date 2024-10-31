@@ -1,14 +1,14 @@
 class QuotationData:
     def __init__(self, supplierDetails, ClientDetails, ProductDetails):
         self.supplierCompany = supplierDetails[0]
-        self.supplerName = supplierDetails[1]
+        self.supplierName = supplierDetails[1]
         self.supplierAddress = supplierDetails[2]
         self.supplierEmail = supplierDetails[3]
         self.supplierPhone = supplierDetails[4]
-        self.clientName = ClientDetails[0]
-        self.clientEmail = ClientDetails[1]
-        self.clientPhone = ClientDetails[2]
-        self.clientAddress = ClientDetails[3]
+        self.clientName = ClientDetails[1]
+        self.clientEmail = ClientDetails[2]
+        self.clientPhone = ClientDetails[3]
+        self.clientAddress = ClientDetails[4]
         self.items, self.subtotal, self.gst_total, self.net_total = self.configureItems(
             ProductDetails
         )
@@ -34,7 +34,8 @@ class QuotationData:
 
     def data(self):
         dataDict = {
-            "supplier_name": self.supplerName,
+            "supplier_company_name": self.supplierCompany,
+            "supplier_name": self.supplierName,
             "supplier_address": self.supplierAddress,
             "supplier_email": self.supplierEmail,
             "supplier_phone": self.supplierPhone,
