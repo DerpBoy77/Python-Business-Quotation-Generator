@@ -2,6 +2,7 @@
 
 Quotation Generator is a desktop application built using [`customtkinter`](https://github.com/TomSchimansky/CustomTkinter) that allows users to manage products, clients, and generate quotations in PDF format. The application provides a user-friendly interface for adding, modifying, and deleting products and clients, as well as generating quotations based on selected products and client details.
 
+![](Images/GUI%20Image.png)
 ### Features
 
 - **Manage Products**: Add, modify, and delete products.
