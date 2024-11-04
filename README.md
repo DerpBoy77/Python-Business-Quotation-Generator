@@ -22,7 +22,7 @@ Quotation Generator is a desktop application built using [`customtkinter`](https
 2. Create a virtual environment and activate it:
     ```sh
     python -m venv .venv
-    source .\.venv\Scripts\Activate.ps1
+    .\.venv\Scripts\Activate.ps1
     ```
 
 3. Install the required dependencies:
